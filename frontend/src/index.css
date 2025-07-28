@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "daisyui";
+
+body{
+    font-family:"poppins",sans-serif;
+}
+
+body, #root, .app-container {
+  background-color: white !important;
+}
+
+.modal-no-shadow {
+  background-color: transparent !important;
+}
+
+/* Can be placed in App.css or a separate CSS file */
+.slick-prev:before,
+.slick-next:before {
+  color: black; /* or dark:text-white if you want to toggle */
+  font-size: 30px;
+}
+
+.dark .slick-prev:before,
+.dark .slick-next:before {
+  color: white;
+}
+
+
+
