@@ -2,18 +2,57 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Login from "./login";
 import { useForm } from 'react-hook-form';
+import axios from "axios";
+import toast from 'react-hot-toast';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/AuthProvider"; 
+
+
 
 function Signup() {
-      const {
+
+       const {
         register,
         handleSubmit,
         formState: { errors },
       } = useForm();
+
+
+      const [authUser, setAuthUser] = useAuth();
+    const location=useLocation();
+    const navigate=useNavigate();
+    // const from=location.state?.from?.pathname||"/courses";
+      const from = location.state?.from || "/";
+
+ 
     
-      const onSubmit = (data) => {
-        console.log('Form Data:', data);
-        // Add your login logic here
-      };
+      const onSubmit = async (data) => {
+  const userInfo = {
+    fullname: data.fullname,
+    email: data.email,
+    password: data.password,
+  };
+
+    await axios
+      .post("http://localhost:4001/user/signup", userInfo)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data) {
+          toast.success("Signup Successfully");
+           setAuthUser(res.data.user);  
+           localStorage.setItem("authUser", JSON.stringify(res.data.user)); // keep in sync    
+          navigate(from, { replace: true });
+        }
+        // localStorage.setItem("Users", JSON.stringify(res.data.user));
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err);
+          toast.error("Error: " + err.response.data.message);
+        }
+      });
+  };
+
 
   return (
     <div className='h-screen flex items-center justify-center bg-white dark:bg-slate-800'>
@@ -38,10 +77,10 @@ function Signup() {
             <input type="text"
               placeholder="Enter your fullname"
               className="w-80 px-3 py-1 rounded-md outline-none bg-white shadow" 
-              {...register('name', { required: true })}
+              {...register('fullname', { required: true })}
               />
               <br/>
-              {errors.name && (
+              {errors.fullname && (
                 <span className="text-sm text-red-800">This field is required</span>
               )}
           </div>
@@ -85,13 +124,13 @@ function Signup() {
                onClick={()=>document.getElementById("my_modal_3").showModal()}>
                 Log in
               </button>
-              <Login />
+              <Login from={from} />
             </p>
           </div>
         </form>
         </div>
       </div>
-
+              
     </div>
   );
 }
